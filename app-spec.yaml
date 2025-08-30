@@ -21,11 +21,6 @@ services:
     success_threshold: 1
     failure_threshold: 3
 
-# Статические файлы (опционально)
-static_sites:
-- name: static
-  github:
-    repo: username/seo-audit-tool  # Замените на ваш GitHub репозиторий
-    branch: main
-  build_command: echo "Static files ready"
-  output_dir: static
+# Статические файлы обрабатываются Flask автоматически
+# Мы добавили базовые CSS/JS файлы для кастомизации
+# Используем CDN для Bootstrap и других библиотек
