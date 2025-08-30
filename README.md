@@ -75,12 +75,9 @@ seo-audit-tool/
 
 #### Шаг 1: Подготовка репозитория
 ```bash
-# Загрузите код на GitHub
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin https://github.com/YOUR_USERNAME/seo-audit-tool.git
-git push -u origin main
+# Код уже загружен на GitHub
+git clone https://github.com/teamhubbel-max/DOteamcrn.git
+cd DOteamcrn
 ```
 
 #### Шаг 2: Развертывание через DO App Platform
@@ -122,8 +119,8 @@ sudo usermod -aG docker $USER
 #### Шаг 3: Развертывание приложения
 ```bash
 # Клонируйте репозиторий
-git clone https://github.com/YOUR_USERNAME/seo-audit-tool.git
-cd seo-audit-tool
+git clone https://github.com/teamhubbel-max/DOteamcrn.git
+cd DOteamcrn
 
 # Соберите Docker образ
 docker build -t seo-audit-tool .

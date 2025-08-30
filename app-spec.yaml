@@ -2,8 +2,8 @@ name: seo-audit-tool
 services:
 - name: web
   github:
-    repo: username/seo-audit-tool  # Замените на ваш GitHub репозиторий
-    branch: main
+    repo: teamhubbel-max/DOteamcrn  # GitHub репозиторий
+    branch: master
     deploy_on_push: true
   run_command: gunicorn --bind 0.0.0.0:$PORT src.app:app
   instance_count: 1
