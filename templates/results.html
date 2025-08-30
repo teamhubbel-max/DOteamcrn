@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+
+{% block title %}Результаты анализа - {{ url }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex align-items-center mb-3">
+                <a href="/" class="btn btn-outline-primary me-3">
+                    <i class="fas fa-arrow-left me-2"></i>Новый анализ
+                </a>
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-chart-line text-primary me-2"></i>
+                    Результаты анализа
+                </h1>
+            </div>
+            <p class="text-muted mb-0">
+                <i class="fas fa-link me-2"></i>
+                <a href="{{ url }}" target="_blank" class="text-decoration-none">{{ url }}</a>
+            </p>
+            <small class="text-muted">
+                Анализ выполнен за {{ "%.2f"|format(analysis.analysis_time) }} сек
+            </small>
+        </div>
+    </div>
+
+    <!-- Overall Score -->
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <div class="card analysis-card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-trophy me-2"></i>Общая оценка SEO
+                    </h5>
+                    <div class="row align-items-center">
+                        <div class="col-md-4 text-center">
+                            <div class="score-circle
+                                {% if report.scores.overall >= 80 %}score-high
+                                {% elif report.scores.overall >= 60 %}score-medium
+                                {% else %}score-low{% endif %}">
+                                {{ report.scores.overall }}
+                            </div>
+                            <p class="mt-2 mb-0">баллов из 100</p>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row g-3">
+                                <div class="col-sm-6">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Мета-теги:</span>
+                                        <strong>{{ report.scores.meta_tags }}%</strong>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar
+                                            {% if report.scores.meta_tags >= 80 %}bg-success
+                                            {% elif report.scores.meta_tags >= 60 %}bg-warning
+                                            {% else %}bg-danger{% endif %}"
+                                            style="width: {{ report.scores.meta_tags }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Производительность:</span>
+                                        <strong>{{ report.scores.performance }}%</strong>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar
+                                            {% if report.scores.performance >= 80 %}bg-success
+                                            {% elif report.scores.performance >= 60 %}bg-warning
+                                            {% else %}bg-danger{% endif %}"
+                                            style="width: {{ report.scores.performance }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Мобильная адаптивность:</span>
+                                        <strong>{{ report.scores.mobile }}%</strong>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar
+                                            {% if report.scores.mobile >= 80 %}bg-success
+                                            {% elif report.scores.mobile >= 60 %}bg-warning
+                                            {% else %}bg-danger{% endif %}"
+                                            style="width: {{ report.scores.mobile }}%"></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="d-flex justify-content-between">
+                                        <span>SSL Безопасность:</span>
+                                        <strong>{{ report.scores.ssl }}%</strong>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar
+                                            {% if report.scores.ssl >= 80 %}bg-success
+                                            {% elif report.scores.ssl >= 60 %}bg-warning
+                                            {% else %}bg-danger{% endif %}"
+                                            style="width: {{ report.scores.ssl }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card analysis-card">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-clipboard-list me-2"></i>Сводка
+                    </h6>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="h4 text-success mb-1">{{ report.summary.passed_checks }}</div>
+                            <small class="text-muted">Успешно</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="h4 text-danger mb-1">{{ report.summary.failed_checks }}</div>
+                            <small class="text-muted">Проблемы</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="small text-muted">
+                        <div>Время анализа: {{ "%.2f"|format(analysis.analysis_time) }} сек</div>
+                        <div>Проверено: {{ analysis.results|length if analysis.results else 0 }} параметров</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Results -->
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Meta Tags Analysis -->
+            {% if analysis.results.meta %}
+            <div class="card analysis-card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tags me-2"></i>Мета-теги
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if analysis.results.meta.title %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>Title:</strong>
+                                <p class="mb-1">{{ analysis.results.meta.title.content }}</p>
+                                <small class="text-muted">
+                                    Длина: {{ analysis.results.meta.title.length }} символов
+                                    {% if analysis.results.meta.title.optimal %}
+                                        <span class="text-success">✓ Оптимально</span>
+                                    {% else %}
+                                        <span class="text-warning">⚠ Требует внимания</span>
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                        {% if analysis.results.meta.title.issues %}
+                        <div class="alert alert-warning py-2">
+                            <small>{{ analysis.results.meta.title.issues|join('; ') }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if analysis.results.meta.description %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>Description:</strong>
+                                <p class="mb-1">{{ analysis.results.meta.description.content }}</p>
+                                <small class="text-muted">
+                                    Длина: {{ analysis.results.meta.description.length }} символов
+                                    {% if analysis.results.meta.description.optimal %}
+                                        <span class="text-success">✓ Оптимально</span>
+                                    {% else %}
+                                        <span class="text-warning">⚠ Требует внимания</span>
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                        {% if analysis.results.meta.description.issues %}
+                        <div class="alert alert-warning py-2">
+                            <small>{{ analysis.results.meta.description.issues|join('; ') }}</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       {% if analysis.results.meta.viewport %}checked{% endif %} disabled>
+                                <label class="form-check-label">
+                                    Viewport meta tag
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       {% if analysis.results.meta.robots %}checked{% endif %} disabled>
+                                <label class="form-check-label">
+                                    Robots meta tag
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Performance Analysis -->
+            {% if analysis.results.performance %}
+            <div class="card analysis-card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tachometer-alt me-2"></i>Производительность
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="mb-3">
+                                <strong>Время загрузки:</strong>
+                                <div class="h4 text-primary">{{ "%.2f"|format(analysis.results.performance.load_time) }} сек</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="mb-3">
+                                <strong>Размер страницы:</strong>
+                                <div class="h4 text-info">{{ (analysis.results.performance.response_size / 1024)|round(1) }} KB</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if analysis.results.performance.issues %}
+                    <div class="alert alert-warning">
+                        <strong>Проблемы производительности:</strong>
+                        <ul class="mb-0 mt-2">
+                            {% for issue in analysis.results.performance.issues %}
+                            <li>{{ issue }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Links Analysis -->
+            {% if analysis.results.links %}
+            <div class="card analysis-card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-link me-2"></i>Структура ссылок
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-sm-3">
+                            <div class="h4 text-primary">{{ analysis.results.links.total_links }}</div>
+                            <small class="text-muted">Всего ссылок</small>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="h4 text-success">{{ analysis.results.links.internal_links }}</div>
+                            <small class="text-muted">Внутренних</small>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="h4 text-info">{{ analysis.results.links.external_links }}</div>
+                            <small class="text-muted">Внешних</small>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="h4 text-danger">{{ analysis.results.links.broken_links }}</div>
+                            <small class="text-muted">Битых</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Recommendations -->
+            <div class="card analysis-card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Рекомендации
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if report.recommendations %}
+                        {% for rec in report.recommendations %}
+                        <div class="recommendation-card
+                            {% if rec.priority == 'high' %}priority-high
+                            {% elif rec.priority == 'medium' %}priority-medium
+                            {% else %}priority-low{% endif %} p-3 mb-3">
+                            <div class="d-flex align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ rec.title }}</h6>
+                                    <p class="mb-2 small">{{ rec.description }}</p>
+                                    <div class="small text-muted">
+                                        <strong>Решение:</strong> {{ rec.solution }}
+                                    </div>
+                                </div>
+                                <span class="badge
+                                    {% if rec.priority == 'high' %}bg-danger
+                                    {% elif rec.priority == 'medium' %}bg-warning
+                                    {% else %}bg-success{% endif %} ms-2">
+                                    {{ rec.priority|title }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-success py-4">
+                            <i class="fas fa-check-circle fa-3x mb-3"></i>
+                            <h6>Отлично!</h6>
+                            <p class="mb-0">Серьезных проблем не найдено</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Export Options -->
+            <div class="card analysis-card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-download me-2"></i>Экспорт отчета
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="exportReport('pdf')">
+                            <i class="fas fa-file-pdf me-2"></i>Экспорт в PDF
+                        </button>
+                        <button class="btn btn-outline-success" onclick="exportReport('json')">
+                            <i class="fas fa-file-code me-2"></i>Экспорт в JSON
+                        </button>
+                        <button class="btn btn-outline-info" onclick="shareReport()">
+                            <i class="fas fa-share me-2"></i>Поделиться отчетом
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportReport(format) {
+    // В будущем здесь будет логика экспорта
+    alert(`Экспорт в ${format.toUpperCase()} будет доступен в следующей версии`);
+}
+
+function shareReport() {
+    // Создаем ссылку для шаринга
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(`Результаты SEO анализа сайта ${document.querySelector('.text-muted a').textContent}`);
+
+    // Открываем диалог шаринга
+    if (navigator.share) {
+        navigator.share({
+            title: 'SEO Audit Report',
+            text: text,
+            url: window.location.href
+        });
+    } else {
+        // Fallback для браузеров без Web Share API
+        const shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+        window.open(shareUrl, '_blank');
+    }
+}
+</script>
+{% endblock %}

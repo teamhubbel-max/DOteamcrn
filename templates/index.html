@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}SEO Audit Tool - Анализ сайта{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-4">
+                    Комплексный SEO анализ вашего сайта
+                </h1>
+                <p class="lead mb-4">
+                    Проверьте оптимизацию сайта для поисковых систем. Получите подробный отчет
+                    с рекомендациями по улучшению позиций в поисковиках.
+                </p>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-light btn-lg" onclick="scrollToForm()">
+                        <i class="fas fa-search me-2"></i>Начать анализ
+                    </button>
+                    <a href="#features" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-info-circle me-2"></i>Подробнее
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <img src="https://via.placeholder.com/400x300/667eea/ffffff?text=SEO+Analysis"
+                     class="img-fluid rounded" alt="SEO Analysis">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Analysis Form Section -->
+<section class="py-5" id="analysis-form">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card analysis-card p-4">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">
+                            <i class="fas fa-search text-primary me-2"></i>
+                            Анализ сайта
+                        </h2>
+
+                        <form method="POST" action="/analyze" id="analysisForm">
+                            <div class="mb-3">
+                                <label for="url" class="form-label">
+                                    <i class="fas fa-link me-2"></i>URL сайта для анализа
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">https://</span>
+                                    <input type="text" class="form-control form-control-lg"
+                                           id="url" name="url" placeholder="example.com"
+                                           required pattern="^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$">
+                                </div>
+                                <div class="form-text">
+                                    Введите домен без протокола (например: google.com)
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" id="analyzeBtn">
+                                    <i class="fas fa-play me-2"></i>
+                                    <span id="btnText">Начать анализ</span>
+                                    <div class="spinner-border spinner-border-sm ms-2 d-none" role="status" id="loadingSpinner">
+                                        <span class="visually-hidden">Загрузка...</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Loading Progress -->
+                        <div class="d-none" id="progressSection">
+                            <div class="mt-4">
+                                <h5>Выполняется анализ...</h5>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                         role="progressbar" style="width: 0%" id="progressBar"></div>
+                                </div>
+                                <div class="mt-2 text-muted" id="progressText">Подготовка...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light" id="features">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col">
+                <h2 class="display-5 fw-bold">Что анализирует инструмент?</h2>
+                <p class="lead">Комплексная проверка всех аспектов SEO оптимизации</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card analysis-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tags fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Мета-теги</h5>
+                        <p class="card-text">
+                            Анализ title, description, keywords и других мета-тегов.
+                            Проверка оптимальной длины и содержания.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card analysis-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tachometer-alt fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Производительность</h5>
+                        <p class="card-text">
+                            Измерение скорости загрузки страниц, размера контента,
+                            анализ времени ответа сервера.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card analysis-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-link fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">Структура ссылок</h5>
+                        <p class="card-text">
+                            Анализ внутренней и внешней перелинковки,
+                            проверка битых ссылок и оптимизации навигации.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card analysis-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-mobile-alt fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Мобильная адаптивность</h5>
+                        <p class="card-text">
+                            Проверка корректного отображения на мобильных устройствах,
+                            анализ viewport и responsive дизайна.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card analysis-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt fa-3x text-danger mb-3"></i>
+                        <h5 class="card-title">Безопасность</h5>
+                        <p class="card-text">
+                            Проверка SSL сертификатов, HTTPS подключения,
+                            анализ потенциальных уязвимостей.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card analysis-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-alt fa-3x text-secondary mb-3"></i>
+                        <h5 class="card-title">Контент</h5>
+                        <p class="card-text">
+                            Анализ качества и оптимизации контента,
+                            проверка структуры заголовков и семантики.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3">
+                <h3 class="display-4 fw-bold text-primary">100+</h3>
+                <p class="text-muted">Проверок оптимизации</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="display-4 fw-bold text-success">30 сек</h3>
+                <p class="text-muted">Среднее время анализа</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="display-4 fw-bold text-info">99.9%</h3>
+                <p class="text-muted">Точность результатов</p>
+            </div>
+            <div class="col-md-3">
+                <h3 class="display-4 fw-bold text-warning">24/7</h3>
+                <p class="text-muted">Работа сервиса</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function scrollToForm() {
+    document.getElementById('analysis-form').scrollIntoView({
+        behavior: 'smooth'
+    });
+}
+
+// Обработка формы анализа
+document.getElementById('analysisForm').addEventListener('submit', function(e) {
+    const btn = document.getElementById('analyzeBtn');
+    const btnText = document.getElementById('btnText');
+    const spinner = document.getElementById('loadingSpinner');
+    const progressSection = document.getElementById('progressSection');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+
+    // Отключаем кнопку и показываем спиннер
+    btn.disabled = true;
+    btnText.textContent = 'Анализ...';
+    spinner.classList.remove('d-none');
+
+    // Показываем прогресс
+    progressSection.classList.remove('d-none');
+
+    // Имитация прогресса (в реальности это будет обрабатываться сервером)
+    let progress = 0;
+    const steps = [
+        'Подготовка...',
+        'Проверка доступности сайта...',
+        'Анализ мета-тегов...',
+        'Проверка производительности...',
+        'Анализ структуры ссылок...',
+        'Проверка мобильной адаптивности...',
+        'Генерация отчета...'
+    ];
+
+    const progressInterval = setInterval(() => {
+        if (progress < steps.length) {
+            progressBar.style.width = ((progress + 1) / steps.length * 100) + '%';
+            progressText.textContent = steps[progress];
+            progress++;
+        } else {
+            clearInterval(progressInterval);
+        }
+    }, 1000);
+});
+</script>
+{% endblock %}

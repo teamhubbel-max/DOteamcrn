@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  seo-audit-tool:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - SECRET_KEY=dev-secret-key-for-docker-compose
+      - MAX_ANALYSIS_TIME=30
+      - MAX_URLS_PER_ANALYSIS=10
+      - DO_APP=false
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      # Для разработки - монтируем код для hot reload
+      - .:/app
+      - /app/venv
+    command: python -c "
+import sys
+sys.path.insert(0, '/app/src')
+from app import create_app
+app = create_app()
+app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+"

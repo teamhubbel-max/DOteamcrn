@@ -1,0 +1,31 @@
+name: seo-audit-tool
+services:
+- name: web
+  github:
+    repo: username/seo-audit-tool  # Замените на ваш GitHub репозиторий
+    branch: main
+    deploy_on_push: true
+  run_command: gunicorn --bind 0.0.0.0:$PORT src.app:app
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  envs:
+  - key: FLASK_ENV
+    value: production
+  - key: SECRET_KEY
+    value: ${SECRET_KEY}  # Установите в DO App Platform
+  health_check:
+    http_path: /health
+    initial_delay_seconds: 30
+    period_seconds: 10
+    timeout_seconds: 5
+    success_threshold: 1
+    failure_threshold: 3
+
+# Статические файлы (опционально)
+static_sites:
+- name: static
+  github:
+    repo: username/seo-audit-tool  # Замените на ваш GitHub репозиторий
+    branch: main
+  build_command: echo "Static files ready"
+  output_dir: static
